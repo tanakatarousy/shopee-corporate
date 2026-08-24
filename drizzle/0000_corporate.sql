@@ -1,0 +1,10 @@
+CREATE TABLE IF NOT EXISTS `beta_inquiries` (`id` text PRIMARY KEY NOT NULL,`visitor_id` text DEFAULT '' NOT NULL,`name` text NOT NULL,`company` text DEFAULT '' NOT NULL,`email` text NOT NULL,`markets_json` text DEFAULT '[]' NOT NULL,`active_listings` text NOT NULL,`monthly_listings` text NOT NULL,`monthly_hours` text NOT NULL,`challenge` text NOT NULL,`pilot_ready` integer DEFAULT false NOT NULL,`price_intent` text NOT NULL,`status` text DEFAULT 'new' NOT NULL,`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL,`updated_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL);
+CREATE UNIQUE INDEX IF NOT EXISTS `beta_inquiries_email_unique` ON `beta_inquiries` (`email`);
+CREATE INDEX IF NOT EXISTS `beta_inquiries_status_created_idx` ON `beta_inquiries` (`status`,`created_at`);
+CREATE INDEX IF NOT EXISTS `beta_inquiries_visitor_created_idx` ON `beta_inquiries` (`visitor_id`,`created_at`);
+CREATE TABLE IF NOT EXISTS `marketing_page_views` (`id` text PRIMARY KEY NOT NULL,`session_id` text NOT NULL,`visitor_id` text DEFAULT '' NOT NULL,`path` text NOT NULL,`referrer_host` text DEFAULT '' NOT NULL,`country` text DEFAULT '' NOT NULL,`device` text DEFAULT '' NOT NULL,`browser` text DEFAULT '' NOT NULL,`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL);
+CREATE INDEX IF NOT EXISTS `marketing_page_views_created_idx` ON `marketing_page_views` (`created_at`);
+CREATE INDEX IF NOT EXISTS `marketing_page_views_path_created_idx` ON `marketing_page_views` (`path`,`created_at`);
+CREATE INDEX IF NOT EXISTS `marketing_page_views_session_created_idx` ON `marketing_page_views` (`session_id`,`created_at`);
+CREATE INDEX IF NOT EXISTS `marketing_page_views_visitor_created_idx` ON `marketing_page_views` (`visitor_id`,`created_at`);
+CREATE TABLE IF NOT EXISTS `marketing_excluded_visitors` (`visitor_id` text PRIMARY KEY NOT NULL,`created_at` text DEFAULT CURRENT_TIMESTAMP NOT NULL);
