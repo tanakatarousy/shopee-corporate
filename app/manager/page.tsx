@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
+import Link from "next/link";
 import { MANAGER_SESSION_COOKIE, managerIdentityFromToken } from "../../lib/admin-auth";
 import { ManagerDashboard } from "./manager-dashboard";
 
@@ -26,7 +27,7 @@ export default async function ManagerPage({ searchParams }: Props) {
           </form>
           {error === "invalid" && <p className="manager-login-error">パスワードが正しくありません。</p>}
           {error === "setup" && <p className="manager-login-error">管理者認証のSecret設定を確認してください。</p>}
-          <a href="/">公開サイトへ戻る</a>
+          <Link href="/">公開サイトへ戻る</Link>
         </section>
       </main>
     );
