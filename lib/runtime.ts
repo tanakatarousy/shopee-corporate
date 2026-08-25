@@ -1,4 +1,8 @@
-export type AppEnv = { DB: D1Database };
+export type AppEnv = {
+  DB: D1Database;
+  ADMIN_PASSWORD?: string;
+  ADMIN_SESSION_SECRET?: string;
+};
 
 declare global { var __SHOPEE_CORPORATE_ENV__: AppEnv | undefined; }
 
