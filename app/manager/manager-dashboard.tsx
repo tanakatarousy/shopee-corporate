@@ -16,7 +16,7 @@ function markets(value:string){try{return (JSON.parse(value) as string[]).join("
 export function ManagerDashboard({displayName}:{displayName:string}){
  const [data,setData]=useState<Data|null>(null),[tab,setTab]=useState<"analytics"|"inquiries">("analytics"),[error,setError]=useState(""),[loading,setLoading]=useState(true),[currentId,setCurrentId]=useState("");
  const load=useCallback(async()=>{setLoading(true);setError("");try{const response=await fetch("/api/manager",{cache:"no-store"}),result=await response.json() as Data&{error?:string};if(!response.ok)throw new Error(result.error||"読み込めませんでした。");setData(result)}catch(e){setError(e instanceof Error?e.message:"読み込めませんでした。")}finally{setLoading(false)}},[]);
- useEffect(()=>{setCurrentId(getOrCreateVisitorId());void load()},[load]);
+ useEffect(()=>{queueMicrotask(()=>{setCurrentId(getOrCreateVisitorId());void load()})},[load]);
  async function patch(body:Record<string,unknown>){const response=await fetch("/api/manager",{method:"PATCH",headers:{"content-type":"application/json"},body:JSON.stringify(body)}),result=await response.json() as {error?:string};if(!response.ok){setError(result.error||"更新できませんでした。");return}await load()}
  return <main className="manager-shell">
   <header className="manager-header"><div><Link href="/">DOCK</Link><span>ADMIN CONSOLE</span></div><div><span>{displayName}</span><form action="/api/manager/logout" method="post"><button type="submit">ログアウト</button></form></div></header>
