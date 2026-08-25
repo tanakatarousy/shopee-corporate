@@ -3,11 +3,20 @@ import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } fr
 import handler from "vinext/server/app-router-entry";
 import { installRuntimeEnv, type AppEnv } from "../lib/runtime";
 
-interface Env { ASSETS: Fetcher; DB: D1Database; IMAGES: { input(stream: ReadableStream): { transform(options: Record<string, unknown>): { output(options: { format: string; quality: number }): Promise<{ response(): Response }> } } } }
+interface Env extends AppEnv {
+  ASSETS: Fetcher;
+  IMAGES: {
+    input(stream: ReadableStream): {
+      transform(options: Record<string, unknown>): {
+        output(options: { format: string; quality: number }): Promise<{ response(): Response }>;
+      };
+    };
+  };
+}
 interface ExecutionContext { waitUntil(promise: Promise<unknown>): void; passThroughOnException(): void; }
 
 const worker = { async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-  installRuntimeEnv(env as unknown as AppEnv);
+  installRuntimeEnv(env);
   const url = new URL(request.url);
   if (url.pathname === "/_vinext/image") {
     const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];
@@ -16,7 +25,9 @@ const worker = { async fetch(request: Request, env: Env, ctx: ExecutionContext):
       return result.response();
     }}, allowedWidths);
   }
-  if (url.pathname.startsWith("/api/") && !(request.method === "POST" && (url.pathname === "/api/inquiries" || url.pathname === "/api/analytics/visits"))) return Response.json({ error: "Not found" }, { status: 404 });
+  const publicPost = request.method === "POST" && (url.pathname === "/api/inquiries" || url.pathname === "/api/analytics/visits");
+  const managerApi = url.pathname === "/api/manager" || url.pathname.startsWith("/api/manager/");
+  if (url.pathname.startsWith("/api/") && !publicPost && !managerApi) return Response.json({ error: "Not found" }, { status: 404 });
   return handler.fetch(request, env, ctx);
 }};
 export default worker;
