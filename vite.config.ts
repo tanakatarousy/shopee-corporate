@@ -1,8 +1,7 @@
 import vinext from "vinext";
 import { defineConfig } from "vite";
 
-const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
-  "00000000-0000-4000-8000-000000000000";
+const DEFAULT_DATABASE_ID = "e6daa5d5-b192-4274-8aee-81972bc4f605";
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
@@ -14,7 +13,8 @@ const localBindingConfig = {
     {
       binding: "DB",
       database_name: process.env.CLOUDFLARE_D1_DATABASE_NAME ?? "shopee-corporate",
-      database_id: process.env.CLOUDFLARE_D1_DATABASE_ID ?? SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+      database_id: process.env.CLOUDFLARE_D1_DATABASE_ID ?? DEFAULT_DATABASE_ID,
+      migrations_dir: "./drizzle",
     },
   ],
 };
